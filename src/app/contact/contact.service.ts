@@ -8,6 +8,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { Contact } from './contact';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Company } from '../company/company';
 
 @Injectable()
 export class ContactService {
@@ -72,6 +73,17 @@ export class ContactService {
     });
 
     return this.db.object('/').update(removeContact)
+      .then(_ => console.log('success'))
+      .catch(error => console.log(error));
+  }
+
+  removeCompany(contactKey: string, companyKey: string) {
+    const removeCompany = {};
+
+    removeCompany[`contacts/${contactKey}/contactCompanies/${companyKey}`] = null;
+    removeCompany[`companyContacts/${companyKey}/${contactKey}`] = null;
+
+    return this.db.object('/').update(removeCompany)
       .then(_ => console.log('success'))
       .catch(error => console.log(error));
   }

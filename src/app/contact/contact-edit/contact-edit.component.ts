@@ -17,7 +17,7 @@ export class ContactEditComponent implements OnInit {
   companies$: Observable<Company[]>;
   isNewContact: boolean;
   contactKey: string;
-  contact = {name: ''} as Contact;
+  contact = { name: '' } as Contact;
   selectedCompany: Company;
   contactCompanies = [];
 
@@ -31,7 +31,7 @@ export class ContactEditComponent implements OnInit {
     this.companies$ = this.companyService.getCompanies();
     this.contactKey = this.activatedRoute.snapshot.params['id'];
     this.isNewContact = this.contactKey === 'new';
-    if (!this.isNewContact) { this.getContact(); };
+    if (!this.isNewContact) { this.getContact(); }
   }
 
   uploadFile(event: any) {
@@ -55,8 +55,10 @@ export class ContactEditComponent implements OnInit {
   }
 
   setContactCompanies() {
-    if (this.contact.contactCompanies == null) { this.contact.contactCompanies = {}; };
-    this.contactCompanies = Object.keys(this.contact.contactCompanies).map(key => this.contact.contactCompanies[key]);
+    if (this.contact.contactCompanies == null) { this.contact.contactCompanies = {} as any; }
+    this.contactCompanies = Object.keys(this.contact.contactCompanies).map(key => {
+      return this.contact.contactCompanies[key];
+    });
   }
 
   saveContact(contact) {
@@ -70,5 +72,12 @@ export class ContactEditComponent implements OnInit {
   removeContact(contact) {
     this.contactService.removeContact(contact)
       .then(_ => this.router.navigate([`contact-list`]));
+  }
+
+  removeCompany(companyName: string) {
+    const companyKey = Object.keys(this.contact.contactCompanies).find(key => {
+      return this.contact.contactCompanies[key].name === companyName;
+    });
+    this.contactService.removeCompany(this.contact.$key, companyKey);
   }
 }
